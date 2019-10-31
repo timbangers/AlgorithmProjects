@@ -17,13 +17,7 @@ import com.geektrust.family.objects.Person;
 public class FamilyTreeProcessor {
 
 	private Person root;	
-	private Person getRoot() {
-		return root;
-	}
-
-	private void setRoot(Person root) {
-		this.root = root;
-	}
+	
 	
 	/**
 	 * This method is used to initialize the tree and add the root element (female, Queen Margaret)
@@ -116,7 +110,7 @@ public class FamilyTreeProcessor {
 	 * @param relationship
 	 * @return nameOfRelative
 	 */
-	private String getRelationship(Person person, String relationship) {
+	public String getRelationship(Person person, String relationship) {
 		String nameOfRelative = "";
 		switch (relationship) {
 		case Constants.PATERNAL_UNCLE:
@@ -190,7 +184,7 @@ public class FamilyTreeProcessor {
 	 * @param gender
 	 * @return
 	 */
-	private String findInLaws(Person person, Gender gender) {
+	public String findInLaws(Person person, Gender gender) {
 		StringBuilder sb = new StringBuilder("");
 		String nameOfRelative = "";
 		// if single
@@ -207,6 +201,14 @@ public class FamilyTreeProcessor {
 		}
 		sb.append(nameOfRelative);
 		return sb.toString().trim();
+	}
+
+	public Person getRoot() {
+		return root;
+	}
+
+	public void setRoot(Person root) {
+		this.root = root;
 	}
 
 }

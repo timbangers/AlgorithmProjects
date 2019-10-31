@@ -113,23 +113,6 @@ public class Person {
 	}
 	
 	/**
-	 * This finds the aunt or uncle based on the gender
-	 * @param gender
-	 * @return relativeName
-	 */
-	public String findAuntOrUncle(Gender gender) {
-		StringBuilder sb = new StringBuilder();
-		if (this.getMother() != null) {
-			for (Person p : this.getMother().getChildrenList()) {
-				if (!this.getName().equals(p.getName()) && p.getGender() == gender) {
-					sb.append(p.getName()).append(" ");
-				}
-			}
-		}
-		return sb.toString().trim();
-	}
-	
-	/**
 	 * This overloaded method is used for finding siblings of specific gender
 	 * @return relativeName
 	 */
@@ -145,6 +128,23 @@ public class Person {
 		return sb.toString().trim();
 	}
 	
+	/**
+	 * This finds the aunt or uncle based on the gender
+	 * @param gender
+	 * @return relativeName
+	 */
+	public String findAuntOrUncle(Gender gender) {
+		StringBuilder sb = new StringBuilder();
+		if (this.getMother() != null) {
+			for (Person p : this.getMother().getChildrenList()) {
+				if (!this.getName().equals(p.getName()) && p.getGender() == gender) {
+					sb.append(p.getName()).append(" ");
+				}
+			}
+		}
+		return sb.toString().trim();
+	}
+		
 	/**
 	 * This method finds a child 
 	 * @param gender
