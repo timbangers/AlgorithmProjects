@@ -1,3 +1,11 @@
+ADD_CHILD Flora Minerva Female
+GET_RELATIONSHIP Remus Maternal-Aunt
+GET_RELATIONSHIP Minerva Siblings
+GET_RELATIONSHIP Victoire Siblings
+ADD_CHILD Luna Lola Female
+GET_RELATIONSHIP Luna Maternal-Aunt
+ADD_CHILD Ted Bella Female
+GET_RELATIONSHIP Remus Siblings
 GET_RELATIONSHIP Lily Siblings
 GET_RELATIONSHIP Lily Sister-In-Law
 GET_RELATIONSHIP Lily Brother-In-Law
@@ -32,7 +40,6 @@ GET_RELATIONSHIP Lily Brother
 GET_RELATIONSHIP Lily Sister
 GET_RELATIONSHIP Ginerva Brother
 GET_RELATIONSHIP Ginerva Sister
-ADD_CHILD Lily Jesse Male
 GET_RELATIONSHIP Loius Sister-In-Law
 GET_RELATIONSHIP Loius Brother-In-Law
 GET_RELATIONSHIP Dominique Sister-In-Law

@@ -218,5 +218,89 @@ public class FamilyTreeProcessorTest {
 
 	}
 	
+	@Test
+	//can only add a child to a married mom
+	public void addChildTest1() {
+		FamilyTreeProcessor processor = new FamilyTreeProcessor();
+
+		Person ginerva = new Person("Ginerva", Gender.Female, null, null);
+		processor.setRoot(ginerva);
+
+		Person harry = new Person("Harry", Gender.Male, null, null);
+		ginerva.setSpouse(harry);
+		
+		Person darcy = new Person("Darcy", Gender.Female, null, null);
+		Person james = new Person("James", Gender.Male, harry, ginerva);
+		james.setSpouse(darcy);
+		darcy.setSpouse(james);
+		
+		Person alice = new Person("Alice", Gender.Female, null, null);
+		Person albus = new Person("Albus", Gender.Male, harry, ginerva);
+		albus.setSpouse(alice);
+		alice.setSpouse(albus);		
+
+		Person lily = new Person("Lily", Gender.Female, harry, ginerva); // no spouse :(
+		ginerva.addChild(lily);
+		ginerva.addChild(james);
+		ginerva.addChild(albus);
+		assertEquals ("CHILD_ADDITION_FAILED", processor.addchild("Lily", "Baby", Gender.Female.name()));
+	}
+	
+	@Test
+	//cannot add a child to a husband
+	public void addChildTest2() {
+		FamilyTreeProcessor processor = new FamilyTreeProcessor();
+
+		Person ginerva = new Person("Ginerva", Gender.Female, null, null);
+		processor.setRoot(ginerva);
+
+		Person harry = new Person("Harry", Gender.Male, null, null);
+		ginerva.setSpouse(harry);
+		
+		Person darcy = new Person("Darcy", Gender.Female, null, null);
+		Person james = new Person("James", Gender.Male, harry, ginerva);
+		james.setSpouse(darcy);
+		darcy.setSpouse(james);
+		
+		Person alice = new Person("Alice", Gender.Female, null, null);
+		Person albus = new Person("Albus", Gender.Male, harry, ginerva);
+		albus.setSpouse(alice);
+		alice.setSpouse(albus);		
+
+		Person lily = new Person("Lily", Gender.Female, harry, ginerva); // no spouse :(
+		ginerva.addChild(lily);
+		ginerva.addChild(james);
+		ginerva.addChild(albus);
+		assertEquals ("CHILD_ADDITION_FAILED", processor.addchild("James", "Baby", Gender.Female.name()));
+	}
+	
+	@Test
+	//adding normally to a married female
+	public void addChildTest3() {
+		FamilyTreeProcessor processor = new FamilyTreeProcessor();
+
+		Person ginerva = new Person("Ginerva", Gender.Female, null, null);
+		processor.setRoot(ginerva);
+
+		Person harry = new Person("Harry", Gender.Male, null, null);
+		ginerva.setSpouse(harry);
+		
+		Person darcy = new Person("Darcy", Gender.Female, null, null);
+		Person james = new Person("James", Gender.Male, harry, ginerva);
+		james.setSpouse(darcy);
+		darcy.setSpouse(james);
+		
+		Person alice = new Person("Alice", Gender.Female, null, null);
+		Person albus = new Person("Albus", Gender.Male, harry, ginerva);
+		albus.setSpouse(alice);
+		alice.setSpouse(albus);		
+
+		Person lily = new Person("Lily", Gender.Female, harry, ginerva); // no spouse :(
+		ginerva.addChild(lily);
+		ginerva.addChild(james);
+		ginerva.addChild(albus);
+		assertEquals ("CHILD_ADDITION_SUCCEEDED", processor.addchild("Alice", "Baby", Gender.Female.name()));
+		assertEquals ("CHILD_ADDITION_SUCCEEDED", processor.addchild("Darcy", "Baby", Gender.Female.name()));
+	}	
 	
 }
