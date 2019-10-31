@@ -6,6 +6,20 @@ group = 'com.example'
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
+sourceSets {
+   main {
+      java {
+         srcDir 'src/com'
+      }
+   }
+   
+   test {
+		java {
+			srcDir 'src/test/java'
+		}    		 
+	}
+}
+
 
 jar {
     archiveBaseName = 'geektrust' //Please do not change this final artifact name
@@ -25,9 +39,21 @@ jar {
     }
 }
 
+test {
+	useJUnitPlatform()
+	testLogging {
+        events "passed", "skipped", "failed"
+    }
+}
+
 repositories {
      mavenCentral()
 }
 //Add your dependencies here
 dependencies {
+	testCompile("junit:junit:4.12")
+	testCompile("org.junit.jupiter:junit-jupiter-api:5.4.2")
+    testCompile("org.junit.jupiter:junit-jupiter-params:5.4.2")
+    testRuntime("org.junit.jupiter:junit-jupiter-engine:5.4.2")
+
 }

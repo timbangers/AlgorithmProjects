@@ -1,4 +1,4 @@
-package com.geektrust.family.util;
+package com.geektrust.family.utils;
 
 import com.geektrust.family.constants.Constants;
 import java.util.ArrayList;

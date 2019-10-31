@@ -3,7 +3,7 @@ package com.geektrust.family.main;
 import java.io.File;
 import java.io.FileNotFoundException;
 
-import com.geektrust.family.util.InputFileReader;
+import com.geektrust.family.utils.InputFileReader;
 
 /**
  * @author jesse timbang
