@@ -17,17 +17,6 @@ import com.geektrust.family.objects.Person;
 public class FamilyTreeProcessor {
 
 	private Person root;	
-	
-	
-	/**
-	 * This method is used to initialize the tree and add the root element (female, Queen Margaret)
-	 * @param name
-	 * @param gender
-	 */
-	public void addRoot(String name, String gender) {
-		Gender g = (Gender.Female.toString().equals(gender)) ? Gender.Female : Gender.Male;
-		this.setRoot(new Person(name, g, null, null));
-	}
 
 	/**
 	 * This method is used to initialize the tree and add any spouse
@@ -38,7 +27,7 @@ public class FamilyTreeProcessor {
 	public void addSpouse(String personName, String spouseName, String gender) {
 		Person person = findPerson(getRoot(), personName);
 		if (person != null && person.getSpouse() == null) {
-			Gender g = (Gender.Female.toString().equals(gender)) ? Gender.Female : Gender.Male;
+			Gender g = (Gender.Female.name().equals(gender)) ? Gender.Female : Gender.Male;
 			Person spouse = new Person(spouseName, g, null, null);
 			spouse.setSpouse(person);
 			person.setSpouse(spouse);
@@ -62,7 +51,7 @@ public class FamilyTreeProcessor {
 			response = Constants.CHILD_ADDITION_FAILED;
 		} else if (personToFind.getGender() == Gender.Female && personToFind.getSpouse() != null) {
 			//adding child if the parent is female AND married
-			Gender g = (Gender.Female.toString().equals(gender)) ? Gender.Female : Gender.Male;
+			Gender g = (Gender.Female.name().equals(gender)) ? Gender.Female : Gender.Male;
 			Person child = new Person(childName, g, personToFind.getSpouse(), personToFind);
 			personToFind.addChild(child);
 			response = Constants.CHILD_ADDITION_SUCCEEDED;
@@ -70,6 +59,15 @@ public class FamilyTreeProcessor {
 			response = Constants.CHILD_ADDITION_FAILED;
 		}
 		return response;
+	}
+	
+	/**
+	 * This method is used to initialize the tree and add the root element (female, Queen Margaret)
+	 * @param name
+	 * @param gender
+	 */
+	public void addRoot(String name, String gender) {
+		this.setRoot(new Person(name, Gender.Female, null, null));		
 	}
 	
 	/**

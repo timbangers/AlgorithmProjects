@@ -1,7 +1,7 @@
 package com.geektrust.family.constants;
 
 /**
- * This class holds the values for the initial family tree
+ * This class holds the initial values for the family tree
  * @author jesse timbang
  *
  */

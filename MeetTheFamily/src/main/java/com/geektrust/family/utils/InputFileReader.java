@@ -7,13 +7,18 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
 
+/**
+ * This class initializes the family tree and performs operations against it using the inputs from the file
+ * @author jesse timbang
+ *
+ */
 public class InputFileReader {
 
-	FamilyTreeProcessor familyTree;
+	FamilyTreeProcessor ftp;
 	
 	public InputFileReader() {
 		super();
-		familyTree = new FamilyTreeProcessor();
+		ftp = new FamilyTreeProcessor();
 		init();
 	}
 
@@ -26,13 +31,13 @@ public class InputFileReader {
 				String[] lineElements = scanner.nextLine().split(" ");				
 				switch (lineElements[0]) {
 				case Constants.ADD_ROOT:
-					familyTree.addRoot(lineElements[1], lineElements[2]);
+					ftp.addRoot(lineElements[1], lineElements[2]);
 					break;
 				case Constants.ADD_CHILD:
-					familyTree.addchild(lineElements[1], lineElements[2], lineElements[3]);
+					ftp.addchild(lineElements[1], lineElements[2], lineElements[3]);
 					break;
 				case Constants.ADD_SPOUSE:
-					familyTree.addSpouse(lineElements[1], lineElements[2], lineElements[3]);
+					ftp.addSpouse(lineElements[1], lineElements[2], lineElements[3]);
 					break;
 				default:
 					break;
@@ -53,10 +58,10 @@ public class InputFileReader {
 				String[] lineElements = scanner.nextLine().split(" ");
 				switch (lineElements[0]) {
 				case Constants.ADD_CHILD:
-					System.out.println(familyTree.addchild(lineElements[1], lineElements[2], lineElements[3]));
+					System.out.println(ftp.addchild(lineElements[1], lineElements[2], lineElements[3]));
 					break;
 				case Constants.GET_RELATIONSHIP:
-					System.out.println(familyTree.getRelationships(lineElements[1], lineElements[2]));
+					System.out.println(ftp.getRelationships(lineElements[1], lineElements[2]));
 					break;
 				default:
 					System.out.println(Constants.INVALID_OPERATION);

@@ -9,10 +9,6 @@ import com.geektrust.family.constants.Gender;
  * This Person class is a node in a tree
  *
  */
-/**
- * @author jesse
- *
- */
 public class Person {
 
 	private String name;
