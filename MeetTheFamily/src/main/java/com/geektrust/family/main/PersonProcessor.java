@@ -1,6 +1,7 @@
 package com.geektrust.family.main;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 
 import com.geektrust.family.util.InputFileReader;
 
@@ -19,6 +20,10 @@ public class PersonProcessor {
 
 		InputFileReader processor = new InputFileReader();
 		File file = new File(args[0]);
-		processor.processFileFromInput(file);		
+		try {
+			processor.process(file);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}		
 	}
 }

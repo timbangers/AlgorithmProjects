@@ -9,6 +9,10 @@ import com.geektrust.family.constants.Gender;
  * This Person class is a node in a tree
  *
  */
+/**
+ * @author jesse
+ *
+ */
 public class Person {
 
 	private String name;
@@ -83,17 +87,71 @@ public class Person {
 	}
 
 
+	/**
+	 * Adds a child to the children list
+	 * @param child
+	 */
 	public void addChild(Person child) {
 		this.getChildrenList().add(child);
 	}
 
-
-	public void addSpouse(Person spouse) {
-		this.setSpouse(spouse);
+	/**
+	 * This method is used for finding siblings
+	 * @return siblingName
+	 */
+	public String findSiblings() {
+		StringBuilder sb = new StringBuilder();
+		if (this.getMother() != null) {
+			for (Person p : this.getMother().getChildrenList()) {
+				if (!this.getName().equals(p.getName()) ) {
+					sb.append(p.getName()).append(" ");
+				}
+			}	
+		}
+		
+		return sb.toString().trim();
 	}
-
+	
+	/**
+	 * This finds the aunt or uncle based on the gender
+	 * @param gender
+	 * @return relativeName
+	 */
+	public String findAuntOrUncle(Gender gender) {
+		StringBuilder sb = new StringBuilder();
+		if (this.getMother() != null) {
+			for (Person p : this.getMother().getChildrenList()) {
+				if (!this.getName().equals(p.getName()) && p.getGender() == gender) {
+					sb.append(p.getName()).append(" ");
+				}
+			}
+		}
+		return sb.toString().trim();
+	}
+	
+	/**
+	 * This overloaded method is used for finding siblings of specific gender
+	 * @return relativeName
+	 */
+	public String findSiblings(Gender gender) {
+		StringBuilder sb = new StringBuilder();
+		if (this.getMother() != null) {
+			for (Person m : this.getMother().getChildrenList()) {
+				if (!this.getName().equals(m.getName()) && this.getGender() != gender ) {
+					sb.append(m.getName()).append(" ");
+				}
+			}	
+		}		
+		return sb.toString().trim();
+	}
+	
+	/**
+	 * This method finds a child 
+	 * @param gender
+	 * @return childName
+	 */
 	public String findChild(Gender gender) {
-		StringBuilder sb = new StringBuilder("");
+		StringBuilder sb = new StringBuilder();
 		//check if the parent in question is male, if yes, need to look at the spouse
 		if (this.getGender() == Gender.Male) {
 			for (Person m : this.getSpouse().getChildrenList()) {
@@ -101,102 +159,80 @@ public class Person {
 					sb.append(m.getName()).append(" ");
 				}
 			}
-		}
-		//process it normally for females
-		for (Person m : this.getChildrenList()) {
-			if (m.getGender() == gender) {
-				sb.append(m.getName()).append(" ");
-			}
-		}
-		return sb.toString().trim();
-	}
-	
-	public String findSiblings() {
-		StringBuilder sb = new StringBuilder("");
-		if (this.getMother() != null) {
-			for (Person m : this.getMother().getChildrenList()) {
-				if (!this.getName().equals(m.getName()) ) {
+		} else {
+			//process it normally for females
+			for (Person m : this.getChildrenList()) {
+				if (m.getGender() == gender) {
 					sb.append(m.getName()).append(" ");
 				}
-			}	
-		}
-		
-		return sb.toString().trim();
-	}
-
-	public String findChildren(Gender gender, String personName) {
-		StringBuilder sb = new StringBuilder("");
-
-		for (Person m : this.getChildrenList()) {
-			if (!personName.equals(m.getName()) && m.getGender() == gender) {
-				sb.append(m.getName()).append(" ");
 			}
-		}
-		
+		}		
 		return sb.toString().trim();
-	}
+	}		
 	
-	//ifSingle
+	/**
+	 * This finds the in laws if the person is single
+	 * @param gender
+	 * @param personName
+	 * @return relativeName
+	 */
 	public String findInLawIfSingle(Gender gender, String personName) {
-		StringBuilder sb = new StringBuilder("");
-
-		for (Person m : this.getChildrenList()) {
-			if (!personName.equals(m.getName())) {	
-				if (m.getSpouse().getGender().name() == gender.name()) {
-					sb.append(m.getSpouse().getName()).append(" ");
+		StringBuilder sb = new StringBuilder();
+		for (Person p : this.getChildrenList()) {
+			if (!personName.equals(p.getName())) {
+				if (p.getSpouse() == null) {
+					//this is another single sibling so continue on to the next sibling
+					continue;
+				}
+				if (p.getSpouse().getGender().name() == gender.name()) {
+					sb.append(p.getSpouse().getName()).append(" ");
 				}
 			}
-		}
-		
+		}		
 		return sb.toString().trim();
 	}
 	
-	//ifSpousewithnoparent
+	/**
+	 * This will find an in law if the person in question is not a direct descendant (a spouse)
+	 * @param gender
+	 * @param person
+	 * @return relativeName
+	 */
 	public String findInLawIfNotChildren(Gender gender, Person person) {
-		StringBuilder sb = new StringBuilder("");
+		StringBuilder sb = new StringBuilder();
 
-		for (Person m : this.getChildrenList()) {
-			//this means this person is a spouse, will need to get the 
-			if (m.getSpouse() == null && gender == m.getGender()) {
-				sb.append(m.getName()).append(" ");
+		for (Person p : this.getChildrenList()) {
+			if (p.getSpouse() == null && gender == p.getGender()) {
+				sb.append(p.getName()).append(" ");
 				continue;
 			}
 			if (person.getMother() == null || person.getFather() == null) {
-				if (gender == m.getGender() && person.getName() != m.getSpouse().getName()) {
-					sb.append(m.getName()).append(" ");
+				if (gender == p.getGender() && person.getName() != p.getSpouse().getName()) {
+					sb.append(p.getName()).append(" ");
 					continue;
 				}
 			}
-			if (m.getSpouse() != null && gender == m.getSpouse().getGender() && m.getSpouse().getName() != person.getName()) {
-				sb.append(m.getSpouse().getName()).append(" ");
+			if (p.getSpouse() != null && gender == p.getSpouse().getGender() && p.getSpouse().getName() != person.getName()) {
+				sb.append(p.getSpouse().getName()).append(" ");
 				continue;
 			}				
 		}			
 		return sb.toString().trim();
 	}
 		
-	//ifsonordaugther
+	/**
+	 * This will find the in law if the person in question is a direct descendant
+	 * @param gender
+	 * @param person
+	 * @return relativeName
+	 */
 	public String findInLawIfChildren(Gender gender, Person person) {
-		StringBuilder sb = new StringBuilder("");
-		for (Person m : this.getChildrenList()) {
-			if (m.getSpouse() != null && gender == m.getSpouse().getGender() && person.getName() != m.getName()) {
-				sb.append(m.getSpouse().getName()).append(" ");
+		StringBuilder sb = new StringBuilder();
+		for (Person p : this.getChildrenList()) {
+			if (p.getSpouse() != null && gender == p.getSpouse().getGender() && person.getName() != p.getName()) {
+				sb.append(p.getSpouse().getName()).append(" ");
 			}			
 		}			
 		return sb.toString().trim();
 	}
-
-	public String findAuntOrUncle(Gender gender) {
-		StringBuilder sb = new StringBuilder("");
-		if (this.getMother() != null) {
-			for (Person m : this.getMother().getChildrenList()) {
-				if (!this.getName().equals(m.getName()) && m.getGender() == gender) {
-					sb.append(m.getName()).append(" ");
-				}
-			}
-		}
-		return sb.toString().trim();
-	}
-
-
 }

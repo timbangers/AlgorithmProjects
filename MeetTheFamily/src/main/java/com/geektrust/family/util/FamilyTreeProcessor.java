@@ -7,162 +7,206 @@ import java.util.List;
 import com.geektrust.family.constants.Gender;
 import com.geektrust.family.objects.Person;
 
+/**
+ * This class contains the core logic to:
+ * 1. add a child to a family
+ * 2. get the names of the relatives given a person and relationship
+ * @author jesse timbang
+ *
+ */
 public class FamilyTreeProcessor {
 
-	private static final String FEMALE = "Female";
+	private Person root;	
+	private Person getRoot() {
+		return root;
+	}
 
-	private Person familyHead;
+	private void setRoot(Person root) {
+		this.root = root;
+	}
 	
-	private Person findMember(Person head, String memberName) {
-		if (memberName == null || head == null) {
+	/**
+	 * This method is used to initialize the tree and add the root element (female, Queen Margaret)
+	 * @param name
+	 * @param gender
+	 */
+	public void addRoot(String name, String gender) {
+		Gender g = (Gender.Female.toString().equals(gender)) ? Gender.Female : Gender.Male;
+		this.setRoot(new Person(name, g, null, null));
+	}
+
+	/**
+	 * This method is used to initialize the tree and add any spouse
+	 * @param personName
+	 * @param spouseName
+	 * @param gender
+	 */
+	public void addSpouse(String personName, String spouseName, String gender) {
+		Person person = findPerson(getRoot(), personName);
+		if (person != null && person.getSpouse() == null) {
+			Gender g = (Gender.Female.toString().equals(gender)) ? Gender.Female : Gender.Male;
+			Person spouse = new Person(spouseName, g, null, null);
+			spouse.setSpouse(person);
+			person.setSpouse(spouse);
+		}
+	}
+	
+	/**
+	 * This method adds a child to a parent (female)
+	 * @param motherName
+	 * @param childName
+	 * @param gender
+	 * @return response
+	 */
+	public String addchild(String motherName, String childName, String gender) {
+		String response;
+		Person personToFind = findPerson(getRoot(), motherName);
+		//check if person was found
+		if (personToFind == null) {
+			response = Constants.PERSON_NOT_FOUND;
+		} else if (childName == null || gender == null) { //check if there is a child to be added
+			response = Constants.CHILD_ADDITION_FAILED;
+		} else if (personToFind.getGender() == Gender.Female && personToFind.getSpouse() != null) {
+			//adding child if the parent is female AND married
+			Gender g = (Gender.Female.toString().equals(gender)) ? Gender.Female : Gender.Male;
+			Person child = new Person(childName, g, personToFind.getSpouse(), personToFind);
+			personToFind.addChild(child);
+			response = Constants.CHILD_ADDITION_SUCCEEDED;
+		} else {
+			response = Constants.CHILD_ADDITION_FAILED;
+		}
+		return response;
+	}
+	
+	/**
+	 * This method will return a person given its parent (or head) thru recursion
+	 * @param parent
+	 * @param personName
+	 * @return personToFind
+	 */
+	public Person findPerson(Person parent, String personName) {
+		if (personName == null || parent == null) {
 			return null;
 		}
-
-		Person member = null;
-		if (memberName.equals(head.getName())) {
-			return head;
-		} else if (head.getSpouse() != null && memberName.equals(head.getSpouse().getName())) {
-			return head.getSpouse();
+		if (personName.equals(parent.getName())) {
+			return parent;
+		} else if (parent.getSpouse() != null && personName.equals(parent.getSpouse().getName())) {
+			return parent.getSpouse();
 		}
-
 		List<Person> childlist = new ArrayList<>();
-		if (head.getGender() == Gender.Female) {
-			childlist = head.getChildrenList();
-		} else if (head.getSpouse() != null) {
-			childlist = head.getSpouse().getChildrenList();
+		if (parent.getGender() == Gender.Female) {
+			childlist = parent.getChildrenList();
+		} else if (parent.getSpouse() != null) {
+			childlist = parent.getSpouse().getChildrenList();
 		}
-
-		for (Person m : childlist) {
-			member = findMember(m, memberName);
-			if (member != null) {
+		Person personToFind = null;
+		for (Person p : childlist) {
+			personToFind = findPerson(p, personName);
+			if (personToFind != null) {
 				break;
 			}
-		}
-		
-		return member;
-	}
-	
-	public void addFamilyHead(String name, String gender) {
-		Gender g = (FEMALE.equals(gender)) ? Gender.Female : Gender.Male;
-		this.familyHead = new Person(name, g, null, null);
+		}		
+		return personToFind;
 	}
 
-	public void addSpouse(String memberName, String spouseName, String gender) {
-		Person member = findMember(familyHead, memberName);
-		if (member != null && member.getSpouse() == null) {
-			Gender g = (FEMALE.equals(gender)) ? Gender.Female : Gender.Male;
-			Person sp = new Person(spouseName, g, null, null);
-			sp.addSpouse(member);
-			member.addSpouse(sp);
-		}
-	}
-	
-	public String addchild(String motherName, String childName, String gender) {
-		String result;
-		Person member = findMember(familyHead, motherName);
-		if (member == null) {
-			result = Constants.PERSON_NOT_FOUND;
-		} else if (childName == null || gender == null) {
-			result = Constants.CHILD_ADDITION_FAILED;
-		} else if (member.getGender() == Gender.Female) {
-			Gender g = (FEMALE.equals(gender)) ? Gender.Female : Gender.Male;
-			Person child = new Person(childName, g, member.getSpouse(), member);
-			member.addChild(child);
-			result = Constants.CHILD_ADDITION_SUCCEEDED;
-		} else {
-			result = Constants.CHILD_ADDITION_FAILED;
-		}
-		return result;
-	}
-
-	public String getRelationships(String person, String relationship) {	
-		String relations;
-		Person member = findMember(familyHead, person);
-		if (member == null) {
-			relations = Constants.PERSON_NOT_FOUND;
-		} else if (relationship == null) {
-			relations = Constants.PROVIDE_VALID_RELATION;
-		} else {
-			relations = getRelationship(member, relationship);
-		}
-
-		return relations;
-
-	}
-
-	private String getRelationship(Person member, String relationship) {
-		String relations = "";
+	/**
+	 * This method takes in a relationship string and returns the name of the relative for that
+	 * relationship
+	 * @param person
+	 * @param relationship
+	 * @return nameOfRelative
+	 */
+	private String getRelationship(Person person, String relationship) {
+		String nameOfRelative = "";
 		switch (relationship) {
-
-		case Constants.DAUGHTER:
-			relations = member.findChild(Gender.Female);
-			break;
-
-		case Constants.SON:
-			relations = member.findChild(Gender.Male);
-			break;
-
-		case Constants.SIBLINGS:
-			relations = member.findSiblings();
-			break;
-
-		case Constants.SISTER_IN_LAW:
-			relations = findInLaws(member, Gender.Female);
-			break;
-
-		case Constants.BROTHER_IN_LAW:
-			relations = findInLaws(member, Gender.Male);
-			break;
-
-		case Constants.MATERNAL_AUNT:
-			if (member.getMother() != null)
-				relations = member.getMother().findAuntOrUncle(Gender.Female);
-			break;
-
-		case Constants.PATERNAL_AUNT:
-			if (member.getFather() != null)
-				relations = member.getFather().findAuntOrUncle(Gender.Female);
-			break;
-
-		case Constants.MATERNAL_UNCLE:
-			if (member.getMother() != null)
-				relations = member.getMother().findAuntOrUncle(Gender.Male);
-			break;
-
 		case Constants.PATERNAL_UNCLE:
-			if (member.getFather() != null)
-				relations = member.getFather().findAuntOrUncle(Gender.Male);
+			if (person.getFather() != null)
+				nameOfRelative = person.getFather().findAuntOrUncle(Gender.Male);
 			break;
-
+		case Constants.MATERNAL_UNCLE:
+			if (person.getMother() != null)
+				nameOfRelative = person.getMother().findAuntOrUncle(Gender.Male);
+			break;			
+		case Constants.PATERNAL_AUNT:
+			if (person.getFather() != null)
+				nameOfRelative = person.getFather().findAuntOrUncle(Gender.Female);
+			break;
+		case Constants.MATERNAL_AUNT:
+			if (person.getMother() != null)
+				nameOfRelative = person.getMother().findAuntOrUncle(Gender.Female);
+			break;
+		case Constants.SISTER_IN_LAW:
+			nameOfRelative = findInLaws(person, Gender.Female);
+			break;
+		case Constants.BROTHER_IN_LAW:
+			nameOfRelative = findInLaws(person, Gender.Male);
+			break;
+		case Constants.SON:
+			nameOfRelative = person.findChild(Gender.Male);
+			break;
+		case Constants.DAUGHTER:
+			nameOfRelative = person.findChild(Gender.Female);
+			break;		
+		case Constants.SIBLINGS:
+			nameOfRelative = person.findSiblings();
+			break;
+		//not in requirements but added anyways	
+		case Constants.BROTHER:
+			nameOfRelative = person.findSiblings(Gender.Male);
+			break;
+		//not in requirements but added anyways	
+		case Constants.SISTER:
+			nameOfRelative = person.findSiblings(Gender.Female);
+			break;		
 		default:
-			relations = Constants.NOT_YET_IMPLEMENTED;
+			nameOfRelative = Constants.UNKNOWN;
 			break;
 		}
-
-		return ("".equals(relations)) ? Constants.NONE : relations;
-
+		return (nameOfRelative.isEmpty()) ? Constants.NONE : nameOfRelative;
+	}
+	
+	/**
+	 * This method finds a person and returns his/her relatives according to the given relationship
+	 * @param person
+	 * @param relationship
+	 * @return nameOfRelative
+	 */
+	public String getRelationships(String person, String relationship) {	
+		String nameOfRelative;
+		Person personToFind = findPerson(getRoot(), person);
+		if (personToFind == null) {
+			nameOfRelative = Constants.PERSON_NOT_FOUND;
+		} else if (relationship == null) {
+			nameOfRelative = Constants.RELATIONSHIP_IS_NULL;
+		} else {
+			nameOfRelative = getRelationship(personToFind, relationship);
+		}
+		return nameOfRelative;
 	}
 
-	private String findInLaws(Person member, Gender gender) {
+	/**
+	 * This method will find an in law depending on their stature
+	 * @param person
+	 * @param gender
+	 * @return
+	 */
+	private String findInLaws(Person person, Gender gender) {
 		StringBuilder sb = new StringBuilder("");
-		String res = "";
+		String nameOfRelative = "";
 		// if single
-		if (member.getSpouse() == null) {
-			res = member.getMother().findInLawIfSingle(gender, member.getName());
+		if (person.getSpouse() == null) {
+			nameOfRelative = person.getMother().findInLawIfSingle(gender, person.getName());
 		}
 		//if spouse who is outside the family
-		if (member.getSpouse() != null &&  member.getSpouse().getMother() != null) {
-			res = member.getSpouse().getMother().findInLawIfNotChildren(gender, member);
+		if (person.getSpouse() != null &&  person.getSpouse().getMother() != null) {
+			nameOfRelative = person.getSpouse().getMother().findInLawIfNotChildren(gender, person);
 		}
 		//if a son or daughter
-		if (member.getMother() != null ||member.getFather() !=null) {
-			res = member.getMother().findInLawIfChildren(gender, member);
+		if (person.getMother() != null ||person.getFather() !=null) {
+			nameOfRelative = person.getMother().findInLawIfChildren(gender, person);
 		}
-		sb.append(res);
+		sb.append(nameOfRelative);
 		return sb.toString().trim();
 	}
-	
-	
-
 
 }

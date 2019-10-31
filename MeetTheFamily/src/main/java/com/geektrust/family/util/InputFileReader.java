@@ -2,7 +2,6 @@ package com.geektrust.family.util;
 
 import com.geektrust.family.constants.Constants;
 import com.geektrust.family.constants.InitialValues;
-import com.geektrust.family.constants.Operations;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -18,55 +17,52 @@ public class InputFileReader {
 		init();
 	}
 
+	/**
+	 * This init method reads the initial values file and constructs the family tree
+	 */
 	private void init() {		
-		try (Scanner sc = new Scanner(InitialValues.initialValues)) {
-			while (sc.hasNextLine()) {
-				String[] commandParams = sc.nextLine().split(";");
-				switch (commandParams[0]) {
-
-				case Constants.ADD_FAMILY_HEAD:
-					familyTree.addFamilyHead(commandParams[1], commandParams[2]);
+		try (Scanner scanner = new Scanner(InitialValues.initialValues)) {
+			while (scanner.hasNextLine()) {
+				String[] lineElements = scanner.nextLine().split(" ");				
+				switch (lineElements[0]) {
+				case Constants.ADD_ROOT:
+					familyTree.addRoot(lineElements[1], lineElements[2]);
 					break;
-
 				case Constants.ADD_CHILD:
-					familyTree.addchild(commandParams[1], commandParams[2], commandParams[3]);
+					familyTree.addchild(lineElements[1], lineElements[2], lineElements[3]);
 					break;
-
 				case Constants.ADD_SPOUSE:
-					familyTree.addSpouse(commandParams[1], commandParams[2], commandParams[3]);
+					familyTree.addSpouse(lineElements[1], lineElements[2], lineElements[3]);
 					break;
-
 				default:
 					break;
 				}
 			}
 		}		
-		
 	}
 	
-	public void processFileFromInput(File file) {
-		
-		try (Scanner sc = new Scanner(file)) {
-			while (sc.hasNextLine()) {
-				String[] commandParams = sc.nextLine().split(" ");
-				String commandResult;
-				switch (commandParams[0]) {
+	/**
+	 * This method will take the input file and process it.
+	 * It will print the response on the console
+	 * @param file
+	 * @throws FileNotFoundException
+	 */
+	public void process(File file) throws FileNotFoundException {		
+		try (Scanner scanner = new Scanner(file)) {
+			while (scanner.hasNextLine()) {
+				String[] lineElements = scanner.nextLine().split(" ");
+				switch (lineElements[0]) {
 				case Constants.ADD_CHILD:
-					commandResult = familyTree.addchild(commandParams[1], commandParams[2], commandParams[3]);
+					System.out.println(familyTree.addchild(lineElements[1], lineElements[2], lineElements[3]));
 					break;
-
 				case Constants.GET_RELATIONSHIP:
-					commandResult = familyTree.getRelationships(commandParams[1], commandParams[2]);
+					System.out.println(familyTree.getRelationships(lineElements[1], lineElements[2]));
 					break;
-
 				default:
-					commandResult = Constants.INVALID_COMMAND;
+					System.out.println(Constants.INVALID_OPERATION);
 					break;
 				}
-				System.out.println(commandResult);				
 			}
-		} catch (FileNotFoundException e) {
-			System.out.println("File Not Found!! Please check the file and the location provided!");
-		}			
+		} 		
 	}	
 }
